@@ -8,13 +8,13 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from tqdm import tqdm
 
-START_DATE = "2016-01-01"
+START_DATE = "2025-01-01"
 END_DATE = (date.today() - timedelta(days=5)).strftime("%Y-%m-%d")
 LOCATION_FILE = "data/raw/vietnam_locations.csv"
 OUTPUT_FILE = "data/raw/vietnam_air_quality.csv"
 
 session = requests.Session()
-retries = Retry(total=10, backoff_factor=5, status_forcelist=[429, 500, 502, 503, 504])
+retries = Retry(total=10, backoff_factor=10, status_forcelist=[429, 500, 502, 503, 504])
 session.mount("http://", HTTPAdapter(max_retries=retries))
 session.mount("https://", HTTPAdapter(max_retries=retries))
 
@@ -104,7 +104,7 @@ def main():
     for city in tqdm(locations, desc="Crawling Data", unit="city"):
         df = fetch_data(city)
         all_data.append(df)
-        time.sleep(3.5)
+        time.sleep(10.0)
 
     if all_data:
         print("Processing and merging data...")
